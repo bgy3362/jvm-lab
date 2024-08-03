@@ -1,4 +1,4 @@
-package public_lab;
+package access_modifier_lab.public_lab;
 
 import static_lab.StaticMethod;
 

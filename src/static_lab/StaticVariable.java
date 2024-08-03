@@ -16,6 +16,8 @@ public class StaticVariable {
         System.out.println(number2.num2);
 
         // static 변수를 인스턴스끼리 공유하는 것 확인
+        System.out.println("Number.num = " + Number.num);
+
     }
 }
 
