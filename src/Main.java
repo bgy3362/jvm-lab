@@ -1,70 +1,91 @@
+/**
+ *
+ * 최소 스패닝 트리
+ *
+ * prim
+ * kruskal 간선 정렬, union
+ *
+ */
+
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
+import java.io.IOException;
+import java.util.AbstractQueue;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int n, m;
-    static int[][] board;
-    static boolean[][] visited;
-    static int[] dx = {-1, 1, 0, 0};
-    static int[] dy = {0, 0, -1, 1};
-    static int answer1;
-    static int answer2;
-    static int count;
+    static int v;
+    static int e;
+    static int[] parents;
+    static int answer = 0;
 
-    public static void main(String[] args) {
-        answer1 = 0;
-        answer2 = 0;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String s = br.readLine();
 
-        // 1
-        Scanner sc = new Scanner(System.in);
-        n = sc.nextInt();
-        m = sc.nextInt();
+        StringTokenizer st = new StringTokenizer(s);
+        v = Integer.parseInt(st.nextToken());
+        e = Integer.parseInt(st.nextToken());
 
-        board = new int[n][m];
-        visited = new boolean[n][m];
+        parents = new int[v + 1];
+        Queue<Edge> q = new PriorityQueue<>();
 
-        for(int i=0; i < n; i++) {
-            for(int j=0; j < m; j++) {
-                board[i][j] = sc.nextInt();
-            }
+        for(int i=0; i < v; i++) {
+            parents[i] = i;
         }
 
-        //2
-        for(int i=0; i < n; i++) {
-            for(int j=0; j < m; j++) {
-                if ((board[i][j] == 1) && !visited[i][j]) {
-                    count = 0;
-                    dfs(i, j);
-                    answer1++;
-
-                    if(answer2 < count) {
-                        answer2 = count;
-                    }
-                }
-            }
+        for(int i=0; i < e; i++) {
+            s = br.readLine();
+            st = new StringTokenizer(s);
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            int weight = Integer.parseInt(st.nextToken());
+            q.add(new Edge(from, to, weight));
         }
-        System.out.println(answer1);
-        System.out.println(answer2);
+
+        while(!q.isEmpty()) {
+            Edge edge = q.poll();
+            int a = edge.from;
+            int b = edge.to;
+
+            if(find(a) == find(b)) continue;
+
+            //부모가 달라야만 mst에 edge추가 => union
+            union(a, b);
+            answer += edge.weight;
+        }
+
+        System.out.println(answer);
     }
 
-    public static void dfs(int x, int y) {
-        count++;
-        visited[x][y] = true;
+    static int find(int x) {
+        if (parents[x] == x) return x;
+        return parents[x] = find(parents[x]);
+    }
 
-        int nx, ny;
+    static void union(int a, int b) {
+        int A = find(a);
+        int B = find(b);
 
-        for(int i = 0; i < 4; i++) {
-            nx = x + dx[i];
-            ny = y + dy[i];
+        if(A != B) parents[B] = A;
+    }
 
-            if (0 <= nx && nx < n && 0 <= ny && ny < m) {
-                if (board[nx][ny] == 1 && !visited[nx][ny]) {
-                    dfs(nx, ny);
-                }
-            }
+    static class Edge implements Comparable<Edge> {
+        int from;
+        int to;
+        int weight;
+
+        public Edge(int from, int to, int weight) {
+            this.from = from;
+            this.to = to;
+            this.weight = weight;
+        }
+
+        @Override
+        public int compareTo(Edge o) {
+            return this.weight - o.weight;
         }
     }
 }

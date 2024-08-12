@@ -1,8 +1,9 @@
 package static_lab;
 
 class Name {
+    private static int a;
     static void print() {
-        System.out.println("A");
+        System.out.println(a);
     }
 
     void print2() {
